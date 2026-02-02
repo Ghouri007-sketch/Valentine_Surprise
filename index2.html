@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Fabi</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffe6e6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #c0392b;
+            font-size: 2rem; /* Slightly smaller to fit longer text */
+            margin: 0;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 80px; /* Prevents layout jumps */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            height: 60px; /* Fixed height for stability */
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        #yesBtn {
+            background-color: #e74c3c;
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.05);
+            background-color: #c0392b;
+        }
+
+        #noBtn {
+            background-color: #fff;
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+            position: absolute;
+            z-index: 5;
+        }
+
+        #noBtn.static {
+            position: static;
+        }
+
+        #successMessage {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        #successMessage h2 {
+            color: #c0392b;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        #successMessage p {
+            color: #555;
+            font-size: 1.3rem;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .gif-container img {
+            max-width: 100%;
+            height: auto;
+            max-height: 280px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .heart {
+            position: absolute;
+            color: #e74c3c;
+            animation: floatUp 4s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="gif-container">
+            <img id="mainGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmZlZWRjM2I0YjI2YjA0YjI2YjA0YjI2YjA0YjI2/26BRv0ThflsHCqDrG/giphy.gif" alt="Cute Bear">
+        </div>
+
+        <h1 id="question">Loading...</h1>
+        
+        <div class="buttons-container" id="btnContainer">
+            <button class="btn" id="yesBtn">Yes</button>
+            <button class="btn static" id="noBtn">No</button>
+        </div>
+
+        <div id="successMessage"></div>
+    </div>
+
+    <script>
+        // ================= CONFIGURATION =================
+        const config = {
+            // THE JOURNEY (The sequence of questions)
+            steps: [
+                {
+                    text: "Will you be my Valentine, Fabi? ❤️",
+                    gif: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmZlZWRjM2I0YjI2YjA0YjI2YjA0YjI2YjA0YjI2/26BRv0ThflsHCqDrG/giphy.gif"
+                },
+                {
+                    text: "Do you promise to be my Valentine for this year and for every other year after that, Fabi? ❤️❤️",
+                    gif: "https://media1.tenor.com/m/7Xj8mOQkP1oAAAAC/milk-and-mocha-hug.gif" // A sweeter/hugging gif
+                },
+                {
+                    text: "And do you see a future where we build a life, a home, and a family together?❤️❤️❤️",
+                    gif: "https://media.giphy.com/media/108M7gCS1JSoO4/giphy.gif" // Very romantic/kitten gif
+                }
+            ],
+
+            finalGif: "https://media.giphy.com/media/T86i6yDyOYz7J6dPhf/giphy.gif",
+
+            // The "No" Button messages
+            noMessages: [
+                "No", "Are you sure?", "Fabi, please?", "Don't do this!", 
+                "I'm gonna cry...", "Think about our future!", 
+                "You're breaking my heart!", "I will cook Kabab Karahi for you, promise!", 
+                "Last chance!", "You can't escape love!", "I will also learn to make Gulab Jamuns for you, fabi, please click on yes now" 
+            ],
+
+            // Final Success Message
+            successTitle: "I knew you'd say yes! 🎊😘😘🎊 ",
+            successText: "Because you are my favourite person, Today, tomorrow, and forever. Ich Liebe Dich, Buhut Sara ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️"
+        };
+
+        // ================= LOGIC =================
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const question = document.getElementById('question');
+        const mainGif = document.getElementById('mainGif');
+        const successMessage = document.getElementById('successMessage');
+        const btnContainer = document.getElementById('btnContainer');
+
+        let currentStep = 0;
+        let messageIndex = 0;
+        let yesBtnSize = 1.2;
+
+        // Initialize First Question
+        updateContent();
+
+        function updateContent() {
+            question.innerText = config.steps[currentStep].text;
+            mainGif.src = config.steps[currentStep].gif;
+            
+            // RESET BUTTONS FOR NEW QUESTION
+            yesBtnSize = 1.2;
+            yesBtn.style.fontSize = '1.2rem';
+            noBtn.classList.add('static'); // Bring No button back to center
+            noBtn.style.position = 'static';
+            noBtn.innerText = "No"; // Reset text to just "No"
+            messageIndex = 0;
+        }
+
+        function handleNoInteraction() {
+            const maxWidth = window.innerWidth - noBtn.clientWidth;
+            const maxHeight = window.innerHeight - noBtn.clientHeight;
+            
+            // Force absolute position if it's currently static
+            if (noBtn.classList.contains('static')) {
+                noBtn.classList.remove('static');
+                noBtn.style.position = 'absolute';
+            }
+
+            // Calculate random position
+            const randomX = Math.floor(Math.random() * maxWidth);
+            const randomY = Math.floor(Math.random() * maxHeight);
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            // Grow Yes Button
+            yesBtnSize += 0.2;
+            yesBtn.style.fontSize = yesBtnSize + 'rem';
+
+            // Cycle Messages
+            messageIndex = (messageIndex + 1) % config.noMessages.length;
+            noBtn.innerText = config.noMessages[messageIndex];
+        }
+
+        function handleYesClick() {
+            // If there are more steps, go to next step
+            if (currentStep < config.steps.length - 1) {
+                currentStep++;
+                updateContent();
+                
+                // Optional: Flash the background pink to indicate progress
+                document.body.style.backgroundColor = "#ffcccc";
+                setTimeout(() => {
+                    document.body.style.backgroundColor = "#ffe6e6";
+                }, 300);
+            
+            } else {
+                // FINAL SUCCESS STATE
+                btnContainer.style.display = 'none';
+                noBtn.style.display = 'none';
+                question.style.display = 'none';
+
+                successMessage.style.display = 'block';
+                successMessage.innerHTML = `
+                    <h2>${config.successTitle}</h2>
+                    <p>${config.successText}</p>
+                `;
+                
+                mainGif.src = config.finalGif;
+                
+                // Heart explosion
+                setInterval(createHeart, 100);
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        // Event Listeners
+        noBtn.addEventListener('mouseover', handleNoInteraction);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleNoInteraction();
+        });
+
+        yesBtn.addEventListener('click', handleYesClick);
+    </script>
+</body>
+</html>
